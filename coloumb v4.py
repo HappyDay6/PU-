@@ -1,36 +1,18 @@
-"""
-Coulomb_v2.py
-=============
-Proton/Antiproton-Simulation in 3D mit Lorentz- und Coulomb-Kraft.
-Parameter werden im Terminal eingegeben.
 
-Layout Figur 1:
-  Spalte 0 (breit) : 3D-Helixbahn (beide Zeilen)
-  Spalte 1 (mittel): xz-Ebene (oben) + yz-Ebene (unten)
-  Spalte 2 (schmal): Info-Box (beide Zeilen) -- kein Ueberlappen mehr
-
-Benoetigte Pakete: numpy, matplotlib, scipy
-"""
 
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
-from mpl_toolkits.mplot3d import Axes3D          # noqa: F401
+from mpl_toolkits.mplot3d import Axes3D          
 from scipy.integrate import solve_ivp
 import matplotlib.animation as animation
 from matplotlib.widgets import Button
 
-# ──────────────────────────────────────────────────────────────────────────────
-# 1. Physikalische Konstanten
-# ──────────────────────────────────────────────────────────────────────────────
 
 E_CHG = 1.602e-19
 M_P   = 1.673e-27
 K_E   = 8.988e9
 
-# ──────────────────────────────────────────────────────────────────────────────
-# 2. Terminal-Eingabe
-# ──────────────────────────────────────────────────────────────────────────────
 
 print("=" * 60)
 print("  Proton & Antiproton -- 3D Simulation mit Coulomb-Kraft")
@@ -54,9 +36,7 @@ if coulomb_on[0]:
         input("  Coulomb-Verstaerkung n (k_eff=k*10^n)  [Standard: 13  ]: ") or 13.0
     )
 
-# ──────────────────────────────────────────────────────────────────────────────
-# 3. Abgeleitete Größen & Konsolen-Ausgabe
-# ──────────────────────────────────────────────────────────────────────────────
+
 
 omega_c = E_CHG * B0 / M_P
 r_c     = M_P * v0 / (E_CHG * B0)
@@ -77,9 +57,7 @@ print(f"  F_Cou    ~ {F_cou:.2e} N  (bei r=2*r_c, ohne Verstaerkung)")
 print(f"  Coulomb  : {'AN  (k_eff = k * 10^' + str(coulomb_exp) + ')' if coulomb_on[0] else 'AUS'}")
 print("=" * 60)
 
-# ──────────────────────────────────────────────────────────────────────────────
-# 4. Simulationsfunktion
-# ──────────────────────────────────────────────────────────────────────────────
+
 
 def run_simulation(B0, v0, vz0, coulomb_on, coulomb_exp, n_cycles):
     omega_c = E_CHG * B0 / M_P
@@ -127,9 +105,7 @@ def run_simulation(B0, v0, vz0, coulomb_on, coulomb_exp, n_cycles):
                     t_eval=t_eval, rtol=1e-8, atol=1e-10)
     return sol, T_c, r_c
 
-# ──────────────────────────────────────────────────────────────────────────────
-# 5. Integration
-# ──────────────────────────────────────────────────────────────────────────────
+
 
 print("  Berechnung laeuft...")
 sol, T_c_sol, r_c_sol = run_simulation(
@@ -138,18 +114,14 @@ sol, T_c_sol, r_c_sol = run_simulation(
 print(f"  Integration: {'OK' if sol.success else 'FEHLER'}")
 print("=" * 60)
 
-# ──────────────────────────────────────────────────────────────────────────────
-# 6. Teilchen-Definitionen
-# ──────────────────────────────────────────────────────────────────────────────
+
 
 PARTICLES = [
     ("Proton (+e)",     0, "royalblue", "-"),
     ("Antiproton (-e)", 6, "tomato",    "--"),
 ]
 
-# ──────────────────────────────────────────────────────────────────────────────
-# 7. Achsgrenzen
-# ──────────────────────────────────────────────────────────────────────────────
+
 
 def get_axis_limits(sol):
     all_x = np.concatenate([sol.y[0]*100, sol.y[6]*100])
@@ -163,14 +135,6 @@ def get_axis_limits(sol):
 
 xlims, ylims, zlims = get_axis_limits(sol)
 
-# ──────────────────────────────────────────────────────────────────────────────
-# 8. FIGUR 1 – Statische Plots
-#
-#    GridSpec 2 Zeilen x 3 Spalten:
-#      Spalte 0 (width 2.0): 3D-Plot,  beide Zeilen
-#      Spalte 1 (width 1.4): xz (oben) + yz (unten)
-#      Spalte 2 (width 0.9): Info-Box, beide Zeilen  ← NEU, kein Ueberlappen
-# ──────────────────────────────────────────────────────────────────────────────
 
 coulomb_label = (
     f"Coulomb AN  (k_eff = k * 10^{coulomb_exp:.1f})"
@@ -186,23 +150,23 @@ fig1.suptitle(
     fontsize=10, fontweight='bold', y=0.99
 )
 
-# 3 Spalten: breit | mittel | schmal
+
 gs = GridSpec(
     2, 3,
     figure=fig1,
     left=0.03, right=0.99,
     top=0.93, bottom=0.07,
     wspace=0.35, hspace=0.48,
-    width_ratios=[2.0, 1.4, 0.9]   # 3D | Projektionen | Info
+    width_ratios=[2.0, 1.4, 0.9]   
 )
 
-ax3d_f1 = fig1.add_subplot(gs[:, 0], projection='3d')  # Spalte 0, beide Zeilen
-ax_xz   = fig1.add_subplot(gs[0, 1])                   # Spalte 1, Zeile 0
-ax_yz   = fig1.add_subplot(gs[1, 1])                   # Spalte 1, Zeile 1
-ax_info = fig1.add_subplot(gs[:, 2])                   # Spalte 2, beide Zeilen
+ax3d_f1 = fig1.add_subplot(gs[:, 0], projection='3d') 
+ax_xz   = fig1.add_subplot(gs[0, 1])                   
+ax_yz   = fig1.add_subplot(gs[1, 1])                   
+ax_info = fig1.add_subplot(gs[:, 2])                  
 ax_info.axis('off')
 
-# ── Trajektorien ─────────────────────────────────────────────────────────────
+
 for name, i, col, ls in PARTICLES:
     xc = sol.y[i  ] * 100
     yc = sol.y[i+1] * 100
@@ -214,7 +178,6 @@ for name, i, col, ls in PARTICLES:
     ax_xz.plot(xc, zc, color=col, ls=ls, lw=1.3, label=name)
     ax_yz.plot(yc, zc, color=col, ls=ls, lw=1.3, label=name)
 
-# ── 3D ───────────────────────────────────────────────────────────────────────
 ax3d_f1.set_xlabel('x [cm]', labelpad=6, fontsize=8)
 ax3d_f1.set_ylabel('y [cm]', labelpad=6, fontsize=8)
 ax3d_f1.set_zlabel('z [cm]', labelpad=6, fontsize=8)
@@ -225,7 +188,7 @@ ax3d_f1.set_title('3D-Helixbahn  (Dreieck = Startpunkt)', fontsize=9, pad=4)
 ax3d_f1.legend(fontsize=7, loc='upper left')
 ax3d_f1.tick_params(labelsize=7)
 
-# ── xz ───────────────────────────────────────────────────────────────────────
+
 ax_xz.set_xlabel('x [cm]', fontsize=8)
 ax_xz.set_ylabel('z [cm]', fontsize=8)
 ax_xz.set_title('Seitenansicht: xz-Ebene\n(Helix-Steigung durch vz0)', fontsize=8)
@@ -235,7 +198,7 @@ ax_xz.grid(True, alpha=0.3)
 ax_xz.legend(fontsize=7)
 ax_xz.tick_params(labelsize=7)
 
-# ── yz ───────────────────────────────────────────────────────────────────────
+
 ax_yz.set_xlabel('y [cm]', fontsize=8)
 ax_yz.set_ylabel('z [cm]', fontsize=8)
 ax_yz.set_title('Frontansicht: yz-Ebene\n(Kreis + Translation)', fontsize=8)
@@ -245,7 +208,6 @@ ax_yz.grid(True, alpha=0.3)
 ax_yz.legend(fontsize=7)
 ax_yz.tick_params(labelsize=7)
 
-# ── Info-Box (eigene Spalte, kein Ueberlappen) ────────────────────────────────
 k_e_disp = K_E * (10.0 ** coulomb_exp)
 Fc_disp  = k_e_disp * E_CHG**2 / (r_c * 0.01)**2
 Fl_disp  = E_CHG * v0 * B0
@@ -292,9 +254,6 @@ ax_info.text(
 plt.savefig('bahnen_coulomb.png', dpi=150, bbox_inches='tight')
 print("  Plot gespeichert: bahnen_coulomb.png")
 
-# ──────────────────────────────────────────────────────────────────────────────
-# 9. FIGUR 2 – Rotierende Animation
-# ──────────────────────────────────────────────────────────────────────────────
 
 is_running   = [True]
 current_azim = [0]
@@ -327,7 +286,6 @@ ax_anim.set_title(
 ax_anim.legend(fontsize=8, loc='upper left')
 ax_anim.tick_params(labelsize=7)
 
-# Parameter-Overlay oben links
 fig2.text(
     0.01, 0.87, (
         f"B0  = {B0:.3f} T\n"
@@ -342,7 +300,6 @@ fig2.text(
     bbox=dict(boxstyle='round,pad=0.4', facecolor='white', alpha=0.88)
 )
 
-# Legende oben rechts
 fig2.text(
     0.75, 0.87, (
         "Dreieck = Startpunkt\n"
@@ -355,7 +312,7 @@ fig2.text(
     bbox=dict(boxstyle='round,pad=0.4', facecolor='#fff8e7', alpha=0.92)
 )
 
-# ── Pause/Play Button (ASCII) ─────────────────────────────────────────────────
+
 ax_bPP = fig2.add_axes([0.30, 0.04, 0.40, 0.07])
 btn_pp = Button(ax_bPP,
     '[ II ] Pause  ->  3D frei drehbar',
