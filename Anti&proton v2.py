@@ -1,26 +1,10 @@
-"""
-simulation_3D.py
-================
-Proton/Antiproton-Simulation in 3D mit Terminal-Eingabe.
-
-Ausgabe:
-  - Figur 1: 3D-Helixbahn + Projektion xy-Ebene (quadratisch)
-  - Figur 2: 360° Kamera-Animation mit Pause/Play
-
-Benötigte Pakete: numpy, matplotlib, scipy
-"""
-
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D          # noqa: F401
+from mpl_toolkits.mplot3d import Axes3D      
 from scipy.integrate import solve_ivp
 import matplotlib.animation as animation
 from matplotlib.widgets import Button
 from matplotlib.lines import Line2D
-
-# ──────────────────────────────────────────────────────────────────────────────
-# 1. Terminal-Eingabe
-# ──────────────────────────────────────────────────────────────────────────────
 
 print("=" * 55)
 print("  Proton & Antiproton -- 3D Simulation")
@@ -33,10 +17,6 @@ B0       = float(input("  Magnetfeldstaerke B0 [T]              [Standard: 0.1]:
 v0       = float(input("  Startgeschwindigkeit v0 [x10^6 m/s]  [Standard: 1.0]: ") or 1.0) * 1e6
 vz0      = float(input("  z-Geschwindigkeit vz0 [x10^6 m/s]    [Standard: 0.5]: ") or 0.5) * 1e6
 n_cycles = int(float(input("  Anzahl Umlaeufe                       [Standard: 3  ]: ") or 3))
-
-# ──────────────────────────────────────────────────────────────────────────────
-# 2. Abgeleitete Größen
-# ──────────────────────────────────────────────────────────────────────────────
 
 omega_c = e * B0 / m_p
 r_c     = m_p * v0 / (e * B0)
@@ -53,10 +33,6 @@ print(f"  r_c     = {r_c*100:.4f}  cm")
 print(f"  T_c     = {T_c:.4e}  s")
 print(f"  h       = {pitch*100:.4f}  cm  (Ganghoehe/Umlauf)")
 print("=" * 55)
-
-# ──────────────────────────────────────────────────────────────────────────────
-# 3. DGL & Integration
-# ──────────────────────────────────────────────────────────────────────────────
 
 PARTICLES = [
     ("Proton",     +e, "royalblue", "-"),
@@ -89,7 +65,6 @@ for pname, charge, color, ls in PARTICLES:
 
 t = solutions["Proton"].t
 
-# ── Analytische Lösung ────────────────────────────────────────────────────────
 def analytical(charge, t):
     omega = charge * B0 / m_p
     r     = m_p * v0 / (abs(charge) * B0)
@@ -106,10 +81,6 @@ for pname, charge, color, ls in PARTICLES:
 
 print("=" * 55)
 
-# ──────────────────────────────────────────────────────────────────────────────
-# 4. Magnetfeldlinien (B = B0 * e_z  →  parallele Linien in z-Richtung)
-# ──────────────────────────────────────────────────────────────────────────────
-
 z_all     = np.concatenate([solutions[pn].y[2]*100 for pn,_,_,_ in PARTICLES])
 z_fl_min  = z_all.min() - abs(z_all.max() - z_all.min()) * 0.05
 z_fl_max  = z_all.max() + abs(z_all.max() - z_all.min()) * 0.05
@@ -118,10 +89,6 @@ n_grid    = 3   # 3×3 = 9 Feldlinien
 scale     = 1.6 * r_c * 100   # cm
 coords    = np.linspace(-scale, scale, n_grid)
 field_xy  = [(xi, yi) for xi in coords for yi in coords]
-
-# ──────────────────────────────────────────────────────────────────────────────
-# 5. FIGUR 1 : 3D-Plot  +  xy-Projektion (quadratisches Koordinatensystem)
-# ──────────────────────────────────────────────────────────────────────────────
 
 fig1 = plt.figure(figsize=(16, 7))
 fig1.canvas.manager.set_window_title("Figur 1 -- Bahnen (statisch)")
@@ -135,7 +102,6 @@ plt.subplots_adjust(left=0.05, right=0.97, top=0.91, bottom=0.08, wspace=0.32)
 ax3d = fig1.add_subplot(1, 2, 1, projection='3d')
 ax_xy = fig1.add_subplot(1, 2, 2)
 
-# ── Magnetfeldlinien im 3D-Plot ───────────────────────────────────────────────
 n_arrows = 4
 for (xi, yi) in field_xy:
     z_pts = np.linspace(z_fl_min, z_fl_max, 50)
@@ -150,7 +116,6 @@ for (xi, yi) in field_xy:
                     color='deepskyblue', alpha=0.40,
                     arrow_length_ratio=0.45, linewidth=0.8)
 
-# ── Trajektorien im 3D-Plot ───────────────────────────────────────────────────
 for pname, charge, color, ls in PARTICLES:
     sol = solutions[pname]
     ax3d.plot(sol.y[0]*100, sol.y[1]*100, sol.y[2]*100,
@@ -187,8 +152,6 @@ for pname, charge, color, ls in PARTICLES:
 
 ax_xy.scatter([0], [0], color='green', s=80, zorder=5, label='Start')
 
-# BUG FIX: 'n' war nicht definiert ausserhalb der list comprehension
-# Korrekt: separate Listen fuer numerisch und analytisch
 xy_num = np.concatenate(
     [solutions[pn].y[j]*100 for pn,_,_,_ in PARTICLES for j in (0, 1)]
 )
@@ -200,9 +163,8 @@ lim    = max(abs(xy_all.min()), abs(xy_all.max())) * 1.15
 
 ax_xy.set_xlim(-lim, lim)
 ax_xy.set_ylim(-lim, lim)
-ax_xy.set_aspect('equal', adjustable='box')   # quadratisch: x & y gleich lang
+ax_xy.set_aspect('equal', adjustable='box')   
 
-# Gleichmaessiges Gitternetz
 tick_step = max(1.0, round(lim / 5 / 5) * 5)
 ax_xy.xaxis.set_major_locator(plt.MultipleLocator(tick_step))
 ax_xy.yaxis.set_major_locator(plt.MultipleLocator(tick_step))
@@ -218,17 +180,12 @@ ax_xy.tick_params(labelsize=8)
 plt.savefig('bahnen_3D.png', dpi=150, bbox_inches='tight')
 print("  Plot gespeichert: bahnen_3D.png")
 
-# ──────────────────────────────────────────────────────────────────────────────
-# 6. FIGUR 2 : Rotierende Animation + Pause/Play (ASCII-Button, kein Emoji)
-# ──────────────────────────────────────────────────────────────────────────────
-
 fig2 = plt.figure(figsize=(9, 8))
 fig2.canvas.manager.set_window_title("Figur 2 -- 360 Grad Kamera-Animation")
 fig2.subplots_adjust(bottom=0.17, top=0.90)
 
 ax_anim = fig2.add_subplot(111, projection='3d')
 
-# Magnetfeldlinien in Animation
 for (xi, yi) in field_xy:
     z_pts = np.linspace(z_fl_min, z_fl_max, 40)
     ax_anim.plot([xi]*len(z_pts), [yi]*len(z_pts), z_pts,
@@ -238,7 +195,6 @@ for (xi, yi) in field_xy:
                    color='deepskyblue', alpha=0.40,
                    arrow_length_ratio=0.40, lw=0.8)
 
-# Trajektorien
 for pname, charge, color, ls in PARTICLES:
     sol = solutions[pname]
     ax_anim.plot(sol.y[0]*100, sol.y[1]*100, sol.y[2]*100,
@@ -258,7 +214,6 @@ ax_anim.set_title(
 ax_anim.legend(fontsize=8, loc='upper left')
 ax_anim.tick_params(labelsize=7)
 
-# Parameter-Overlay (kein Emoji → kein Font-Warning)
 fig2.text(
     0.01, 0.94,
     f"B0={B0:.3f}T  |  v0={v0/1e6:.2f}e6 m/s  |  "
@@ -268,7 +223,6 @@ fig2.text(
     bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.85)
 )
 
-# ── Pause/Play Button (ASCII, kein Emoji) ─────────────────────────────────────
 ax_btn    = fig2.add_axes([0.30, 0.04, 0.40, 0.07])
 btn       = Button(ax_btn, '[ II ] Pause  ->  3D frei drehbar',
                    color='lightcoral', hovercolor='salmon')
