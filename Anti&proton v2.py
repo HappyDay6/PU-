@@ -85,8 +85,8 @@ z_all     = np.concatenate([solutions[pn].y[2]*100 for pn,_,_,_ in PARTICLES])
 z_fl_min  = z_all.min() - abs(z_all.max() - z_all.min()) * 0.05
 z_fl_max  = z_all.max() + abs(z_all.max() - z_all.min()) * 0.05
 
-n_grid    = 3   # 3×3 = 9 Feldlinien
-scale     = 1.6 * r_c * 100   # cm
+n_grid    = 3   
+scale     = 1.6 * r_c * 100  
 coords    = np.linspace(-scale, scale, n_grid)
 field_xy  = [(xi, yi) for xi in coords for yi in coords]
 
@@ -139,7 +139,6 @@ ax3d.set_zlabel('z [cm]', labelpad=5, fontsize=8)
 ax3d.set_title('3D-Helixbahn  +  Magnetfeldlinien (B0)', fontsize=9, pad=4)
 ax3d.tick_params(labelsize=7)
 
-# ── xy-Projektion (quadratisch) ───────────────────────────────────────────────
 for pname, charge, color, ls in PARTICLES:
     sol = solutions[pname]
     ax_xy.plot(sol.y[0]*100, sol.y[1]*100,
