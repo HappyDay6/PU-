@@ -137,7 +137,7 @@ xlims, ylims, zlims = get_axis_limits(sol)
 
 
 coulomb_label = (
-    f"Coulomb AN  (k_eff = k * 10^{coulomb_exp:.1f})"
+    f"Coulomb AN  (k_eff = k * 3.3 * 10^{coulomb_exp:.1f})"
     if coulomb_on[0] else "Coulomb AUS"
 )
 
