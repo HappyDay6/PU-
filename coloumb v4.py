@@ -42,7 +42,7 @@ omega_c = E_CHG * B0 / M_P
 r_c     = M_P * v0 / (E_CHG * B0)
 T_c     = 2 * np.pi / omega_c
 pitch   = vz0 * T_c
-k_eff   = K_E * (10.0 ** coulomb_exp)
+k_eff   = K_E * 3.3* (10.0 ** coulomb_exp)
 F_lor   = E_CHG * v0 * B0
 F_cou   = K_E * E_CHG**2 / (2 * r_c)**2
 
@@ -54,7 +54,7 @@ print(f"  T_c      = {T_c:.4e} s")
 print(f"  h        = {pitch*100:.4f} cm  (Ganghoehe/Umlauf)")
 print(f"  F_Lor    ~ {F_lor:.2e} N")
 print(f"  F_Cou    ~ {F_cou:.2e} N  (bei r=2*r_c, ohne Verstaerkung)")
-print(f"  Coulomb  : {'AN  (k_eff = k * 10^' + str(coulomb_exp) + ')' if coulomb_on[0] else 'AUS'}")
+print(f"  Coulomb  : {'AN  (k_eff = k * 3.3* 10^' + str(coulomb_exp) + ')' if coulomb_on[0] else 'AUS'}")
 print("=" * 60)
 
 
@@ -208,10 +208,10 @@ ax_yz.grid(True, alpha=0.3)
 ax_yz.legend(fontsize=7)
 ax_yz.tick_params(labelsize=7)
 
-k_e_disp = K_E * (10.0 ** coulomb_exp)
+k_e_disp = K_E * (3.3 * 10.0 ** coulomb_exp)
 Fc_disp  = k_e_disp * E_CHG**2 / (r_c * 0.01)**2
 Fl_disp  = E_CHG * v0 * B0
-coulomb_status = ('AN (x10^' + f'{coulomb_exp:.1f})') if coulomb_on[0] else 'AUS'
+coulomb_status = ('AN (x 3.3 * 10^' + f'{coulomb_exp:.1f})') if coulomb_on[0] else 'AUS'
 
 info_txt = (
     "-- Physikalische\n"
