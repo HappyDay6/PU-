@@ -33,7 +33,7 @@ coulomb_on  = [coulomb_str.lower() == 'j']
 coulomb_exp = 0.0
 if coulomb_on[0]:
     coulomb_exp = float(
-        input("  Coulomb-Verstaerkung n (k_eff=k*10^n)  [Standard: 13  ]: ") or 13.0
+        input("  Coulomb-Verstaerkung n (k_eff=k * 3.3 *10^n)  [Standard: 13  ]: ") or 13.0
     )
 
 
@@ -54,7 +54,7 @@ print(f"  T_c      = {T_c:.4e} s")
 print(f"  h        = {pitch*100:.4f} cm  (Ganghoehe/Umlauf)")
 print(f"  F_Lor    ~ {F_lor:.2e} N")
 print(f"  F_Cou    ~ {F_cou:.2e} N  (bei r=2*r_c, ohne Verstaerkung)")
-print(f"  Coulomb  : {'AN  (k_eff = k * 3.3* 10^' + str(coulomb_exp) + ')' if coulomb_on[0] else 'AUS'}")
+print(f"  Coulomb  : {'AN  (k_eff = k * 3.3 * 10^' + str(coulomb_exp) + ')' if coulomb_on[0] else 'AUS'}")
 print("=" * 60)
 
 
