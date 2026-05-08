@@ -1,5 +1,3 @@
-
-
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
@@ -8,11 +6,9 @@ from scipy.integrate import solve_ivp
 import matplotlib.animation as animation
 from matplotlib.widgets import Button
 
-
 E_CHG = 1.602e-19
 M_P   = 1.673e-27
 K_E   = 8.988e9
-
 
 print("=" * 60)
 print("  Proton & Antiproton -- 3D Simulation mit Coulomb-Kraft")
@@ -36,8 +32,6 @@ if coulomb_on[0]:
         input("  Coulomb-Verstaerkung n (k_eff=k * 3.3 *10^n)  [Standard: 13  ]: ") or 13.0
     )
 
-
-
 omega_c = E_CHG * B0 / M_P
 r_c     = M_P * v0 / (E_CHG * B0)
 T_c     = 2 * np.pi / omega_c
@@ -56,8 +50,6 @@ print(f"  F_Lor    ~ {F_lor:.2e} N")
 print(f"  F_Cou    ~ {F_cou:.2e} N  (bei r=2*r_c, ohne Verstaerkung)")
 print(f"  Coulomb  : {'AN  (k_eff = k * 3.3 * 10^' + str(coulomb_exp) + ')' if coulomb_on[0] else 'AUS'}")
 print("=" * 60)
-
-
 
 def run_simulation(B0, v0, vz0, coulomb_on, coulomb_exp, n_cycles):
     omega_c = E_CHG * B0 / M_P
@@ -105,16 +97,12 @@ def run_simulation(B0, v0, vz0, coulomb_on, coulomb_exp, n_cycles):
                     t_eval=t_eval, rtol=1e-8, atol=1e-10)
     return sol, T_c, r_c
 
-
-
 print("  Berechnung laeuft...")
 sol, T_c_sol, r_c_sol = run_simulation(
     B0, v0, vz0, coulomb_on, coulomb_exp, n_cycles
 )
 print(f"  Integration: {'OK' if sol.success else 'FEHLER'}")
 print("=" * 60)
-
-
 
 PARTICLES = [
     ("Proton (+e)",     0, "royalblue", "-"),
@@ -135,7 +123,6 @@ def get_axis_limits(sol):
 
 xlims, ylims, zlims = get_axis_limits(sol)
 
-
 coulomb_label = (
     f"Coulomb AN  (k_eff = k * 3.3 * 10^{coulomb_exp:.1f})"
     if coulomb_on[0] else "Coulomb AUS"
@@ -149,7 +136,6 @@ fig1.suptitle(
     f"vz0={vz0/1e6:.2f}e6 m/s   {coulomb_label}",
     fontsize=10, fontweight='bold', y=0.99
 )
-
 
 gs = GridSpec(
     2, 3,
@@ -165,7 +151,6 @@ ax_xz   = fig1.add_subplot(gs[0, 1])
 ax_yz   = fig1.add_subplot(gs[1, 1])                   
 ax_info = fig1.add_subplot(gs[:, 2])                  
 ax_info.axis('off')
-
 
 for name, i, col, ls in PARTICLES:
     xc = sol.y[i  ] * 100
@@ -253,7 +238,6 @@ ax_info.text(
 
 plt.savefig('bahnen_coulomb.png', dpi=150, bbox_inches='tight')
 print("  Plot gespeichert: bahnen_coulomb.png")
-
 
 is_running   = [True]
 current_azim = [0]
